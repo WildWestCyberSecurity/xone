@@ -8,6 +8,8 @@
 - [x] Wireless devices (with Xbox Wireless Dongle)
 - [ ] Bluetooth devices (check out [`xpadneo`](https://github.com/atar-axis/xpadneo))
 
+Installing `xone` will disable the `xpad` kernel driver. If you are still using Xbox or Xbox 360 peripherals, you will have to install [`xpad-noone`](https://github.com/medusalix/xpad-noone) as a replacement for `xpad`.
+
 ## Important notes
 
 This driver is still in active development. Use at your own risk!

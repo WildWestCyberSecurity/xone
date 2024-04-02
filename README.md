@@ -112,6 +112,12 @@ echo 2 | sudo tee /sys/class/leds/gip*/mode
 echo 5 | sudo tee /sys/class/leds/gip*/brightness
 ```
 
+Changing the LED in the above way is temporary, it will only last until the device disconnects. To apply these settings automatically when a device connects, you can create a new `udev` rule in `/etc/udev/rules.d/50-xone.rules` with the following content:
+
+```
+ACTION=="add", SUBSYSTEM=="leds", KERNEL=="gip*", ATTR{mode}="2", ATTR{brightness}="5"
+```
+
 Replace the wildcard (`gip*`) if you want to control the LED of a specific device.
 The modes and the maximum brightness can vary from device to device.
 

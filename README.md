@@ -82,10 +82,10 @@ git clone https://github.com/medusalix/xone
 
 ```
 cd xone
-sudo ./install.sh --release
+sudo ./install.sh
 ```
 
-**NOTE:** Please omit the `--release` flag when asked for your debug logs.
+**NOTE:** You can use the `--release` flag to disable debug logging.
 
 4. Download the firmware for the wireless dongle:
 

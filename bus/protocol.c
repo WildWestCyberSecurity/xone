@@ -27,7 +27,7 @@
 #define gip_warn(client, ...) dev_warn(&(client)->adapter->dev, __VA_ARGS__)
 #define gip_err(client, ...) dev_err(&(client)->adapter->dev, __VA_ARGS__)
 
-enum gip_command_internal {
+enum gip_command_core {
 	GIP_CMD_ACKNOWLEDGE = 0x01,
 	GIP_CMD_ANNOUNCE = 0x02,
 	GIP_CMD_STATUS = 0x03,
@@ -43,7 +43,7 @@ enum gip_command_internal {
 	GIP_CMD_AUDIO_SAMPLES = 0x60,
 };
 
-enum gip_command_external {
+enum gip_command_client {
 	GIP_CMD_RUMBLE = 0x09,
 	GIP_CMD_INPUT = 0x20,
 };
@@ -104,7 +104,7 @@ struct gip_pkt_status {
 
 struct gip_pkt_identify {
 	u8 unknown[16];
-	__le16 external_commands_offset;
+	__le16 client_commands_offset;
 	__le16 firmware_versions_offset;
 	__le16 audio_formats_offset;
 	__le16 capabilities_out_offset;
@@ -770,15 +770,15 @@ static struct gip_info_element *gip_parse_info_element(u8 *data, u32 len,
 	return elem;
 }
 
-static int gip_parse_external_commands(struct gip_client *client,
-				       struct gip_pkt_identify *pkt,
-				       u8 *data, u32 len)
+static int gip_parse_client_commands(struct gip_client *client,
+				     struct gip_pkt_identify *pkt,
+				     u8 *data, u32 len)
 {
 	struct gip_info_element *cmds;
 	struct gip_command_descriptor *desc;
 	int i;
 
-	cmds = gip_parse_info_element(data, len, pkt->external_commands_offset,
+	cmds = gip_parse_info_element(data, len, pkt->client_commands_offset,
 				      sizeof(*desc));
 	if (IS_ERR(cmds)) {
 		if (PTR_ERR(cmds) == -ENOTSUPP)
@@ -796,7 +796,7 @@ static int gip_parse_external_commands(struct gip_client *client,
 			__func__, desc->command, desc->length, desc->options);
 	}
 
-	client->external_commands = cmds;
+	client->client_commands = cmds;
 
 	return 0;
 }
@@ -1063,7 +1063,7 @@ static int gip_handle_pkt_identify(struct gip_client *client,
 	data += sizeof(pkt->unknown);
 	len -= sizeof(pkt->unknown);
 
-	err = gip_parse_external_commands(client, pkt, data, len);
+	err = gip_parse_client_commands(client, pkt, data, len);
 	if (err)
 		goto err_free_info;
 

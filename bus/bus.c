@@ -47,6 +47,7 @@ static void gip_client_release(struct device *dev)
 
 	gip_free_client_info(client);
 	kfree(client->chunk_buf_out);
+	kfree(client->chunk_buf_in);
 	kfree(client);
 }
 

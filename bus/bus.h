@@ -71,6 +71,7 @@ struct gip_client {
 	struct work_struct work_unregister;
 
 	struct gip_chunk_buffer *chunk_buf_out;
+	struct gip_chunk_buffer *chunk_buf_in;
 	struct gip_hardware hardware;
 
 	struct gip_info_element *client_commands;

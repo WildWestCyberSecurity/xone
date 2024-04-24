@@ -70,7 +70,7 @@ struct gip_client {
 	struct work_struct work_register;
 	struct work_struct work_unregister;
 
-	struct gip_chunk_buffer *chunk_buf;
+	struct gip_chunk_buffer *chunk_buf_out;
 	struct gip_hardware hardware;
 
 	struct gip_info_element *client_commands;

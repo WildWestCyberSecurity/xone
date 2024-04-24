@@ -46,7 +46,7 @@ static void gip_client_release(struct device *dev)
 	struct gip_client *client = to_gip_client(dev);
 
 	gip_free_client_info(client);
-	kfree(client->chunk_buf);
+	kfree(client->chunk_buf_out);
 	kfree(client);
 }
 

@@ -39,7 +39,6 @@ struct gip_strat_pkt_input {
 struct gip_strat {
 	struct gip_client *client;
 	struct gip_battery battery;
-	struct gip_auth auth;
 	struct gip_input input;
 };
 
@@ -84,14 +83,6 @@ static int gip_strat_op_battery(struct gip_client *client,
 	gip_report_battery(&strat->battery, type, level);
 
 	return 0;
-}
-
-static int gip_strat_op_authenticate(struct gip_client *client,
-				     void *data, u32 len)
-{
-	struct gip_strat *strat = dev_get_drvdata(&client->dev);
-
-	return gip_auth_process_pkt(&strat->auth, data, len);
 }
 
 static int gip_strat_op_guide_button(struct gip_client *client, bool down)
@@ -169,7 +160,14 @@ static int gip_strat_probe(struct gip_client *client)
 	if (err)
 		return err;
 
-	err = gip_auth_start_handshake(&strat->auth, client);
+	/*
+	 * The Stratocaster sends auth chunks without specifying the
+	 * acknowledgment option while still expecting an acknowledgment.
+	 * The Windows driver handles this by sending an acknowledgment
+	 * after 100 ms when no further chunks are received.
+	 * We skip the handshake instead, as it is not required.
+	 */
+	err = gip_auth_send_complete(client);
 	if (err)
 		return err;
 
@@ -191,7 +189,6 @@ static struct gip_driver gip_strat_driver = {
 	.class = "MadCatz.Xbox.Guitar.Stratocaster",
 	.ops = {
 		.battery = gip_strat_op_battery,
-		.authenticate = gip_strat_op_authenticate,
 		.guide_button = gip_strat_op_guide_button,
 		.input = gip_strat_op_input,
 	},

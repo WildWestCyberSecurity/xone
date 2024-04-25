@@ -380,11 +380,13 @@ static int gip_auth_handle_pkt_certificate(struct gip_auth *auth,
 	if (len > GIP_AUTH_CERTIFICATE_MAX_LEN)
 		return -EINVAL;
 
-	/* poor way of extracting a pubkey from an X.509 certificate */
-	/* the certificates issued by Microsoft do not comply with RFC 5280 */
-	/* they have an empty subject and no subjectAltName */
-	/* this is explicitly forbidden by section 4.2.1.6 of the RFC */
-	/* the kernel's ASN.1 parser will fail when using x509_cert_parse */
+	/*
+	 * Poor way of extracting a pubkey from an X.509 certificate.
+	 * The certificates issued by Microsoft do not comply with RFC 5280.
+	 * They have an empty subject and no subjectAltName.
+	 * This is explicitly forbidden by section 4.2.1.6 of the RFC.
+	 * The kernel's ASN.1 parser will fail when using x509_cert_parse.
+	 */
 	for (i = 0; i + sizeof(asn1_seq) <= len; i++) {
 		if (memcmp(data + i, asn1_seq, sizeof(asn1_seq)))
 			continue;

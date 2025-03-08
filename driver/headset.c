@@ -158,15 +158,17 @@ static snd_pcm_uframes_t gip_headset_pcm_pointer(struct snd_pcm_substream *sub)
 }
 
 static const struct snd_pcm_ops gip_headset_pcm_ops = {
-	.open = gip_headset_pcm_open,
-	.close = gip_headset_pcm_close,
-	.ioctl = snd_pcm_lib_ioctl,
-	.hw_params = gip_headset_pcm_hw_params,
-	.hw_free = gip_headset_pcm_hw_free,
-	.prepare = gip_headset_pcm_prepare,
-	.trigger = gip_headset_pcm_trigger,
-	.pointer = gip_headset_pcm_pointer,
-	.page = snd_pcm_lib_get_vmalloc_page,
+    .open = gip_headset_pcm_open,
+    .close = gip_headset_pcm_close,
+    .ioctl = snd_pcm_lib_ioctl,
+    .hw_params = gip_headset_pcm_hw_params,
+    .hw_free = gip_headset_pcm_hw_free,
+    .prepare = gip_headset_pcm_prepare,
+    .trigger = gip_headset_pcm_trigger,
+    .pointer = gip_headset_pcm_pointer,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0)
+    .page = snd_pcm_lib_get_vmalloc_page,  // Keep old function for older kernels
+#endif
 };
 
 static bool gip_headset_advance_pointer(struct gip_headset_stream *stream,
